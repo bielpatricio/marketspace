@@ -4,7 +4,7 @@ import { ArrowRight, Tag } from 'phosphor-react-native'
 
 export function MyAds() {
   return (
-    <VStack flex={1} mt={10}>
+    <VStack>
       <Text fontSize="sm" color="gray.300" mb={3}>
         Seus produtos anunciados para venda
       </Text>

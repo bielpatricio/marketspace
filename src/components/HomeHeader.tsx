@@ -5,6 +5,8 @@ import { Button } from './Button'
 import { Avatar } from './Avatar'
 import { useState } from 'react'
 import { api } from '@services/axios'
+import { useNavigation } from '@react-navigation/native'
+import { AppNavigatorRoutesStackProps } from '@routes/app.routes'
 
 type HomeHeaderType = {
   name: string
@@ -12,7 +14,11 @@ type HomeHeaderType = {
 }
 
 export function HomeHeader({ name, avatar }: HomeHeaderType) {
-  const [isLoading, setIsLoading] = useState(false)
+  const navigation = useNavigation<AppNavigatorRoutesStackProps>()
+
+  function handleGoCreateAds() {
+    navigation.navigate('create')
+  }
 
   return (
     <HStack flexWrap="wrap">
@@ -35,8 +41,7 @@ export function HomeHeader({ name, avatar }: HomeHeaderType) {
 
       <HStack flexWrap="wrap" w="1/2" alignItems="center">
         <Button
-          // isLoading={isLoading}
-          // onPress={handleSubmit(handleSignUp)}
+          onPress={handleGoCreateAds}
           icon={
             <Plus size={20} weight="bold" color={`${theme.colors.gray[700]}`} />
           }

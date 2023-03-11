@@ -12,7 +12,7 @@ import {
 } from 'native-base'
 
 import LogoSvg from '@assets/logo.svg'
-import { Input } from '@components/Input'
+import * as Input from '@components/Input'
 import { Button } from '@components/Button'
 import { useNavigation } from '@react-navigation/native'
 import { AuthNavigatorRoutesProps } from '@routes/auth.routes'
@@ -30,6 +30,7 @@ import * as ImagePicker from 'expo-image-picker'
 import * as FileSystem from 'expo-file-system'
 import { useAuth } from '@hooks/useAuth'
 import { api } from '@services/axios'
+import { IconEye } from '../components/Input'
 
 const PHOTO_SIZE = 32
 const EDIT_SIZE = 14
@@ -81,8 +82,8 @@ export function SignUp() {
   const [isLoading, setIsLoading] = useState(false)
   const navigation = useNavigation<AuthNavigatorRoutesProps>()
 
-  const [showPassword, setShowPassword] = useState(true)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(true)
+  const [isShowingPassword, setIsShowingPassword] = useState(true)
+  const [isShowingConfirmPassword, setIsShowingConfirmPassword] = useState(true)
 
   const { handleSignIn } = useAuth()
 
@@ -166,7 +167,7 @@ export function SignUp() {
 
         if (photoInfo.size && photoInfo.size / 1024 / 1024 > 5) {
           return toast.show({
-            title: 'This Image is too big. Choose one smaller than 5MB.',
+            title: 'Esta imagem é muito grande. Escolha uma menor que 5MB.',
             placement: 'top',
             bgColor: 'red.500',
           })
@@ -206,7 +207,9 @@ export function SignUp() {
     } catch (error) {
       const isAppError = error instanceof AppError
 
-      const title = isAppError ? error.message : 'Unable to update the Avatar.'
+      const title = isAppError
+        ? error.message
+        : 'Não foi possível carregar a foto para o seu avatar.'
 
       toast.show({
         title,
@@ -302,12 +305,13 @@ export function SignUp() {
             name="name"
             render={({ field }) => {
               return (
-                <Input
-                  placeholder="Nome"
-                  onChangeText={field.onChange}
-                  value={field.value}
-                  errorMessage={errors.name?.message}
-                />
+                <Input.Root errorMessage={errors.name?.message}>
+                  <Input.Input
+                    placeholder="Nome"
+                    onChangeText={field.onChange}
+                    value={field.value}
+                  />
+                </Input.Root>
               )
             }}
           />
@@ -317,14 +321,15 @@ export function SignUp() {
             name="email"
             render={({ field }) => {
               return (
-                <Input
-                  placeholder="e-mail"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  onChangeText={field.onChange}
-                  value={field.value}
-                  errorMessage={errors.email?.message}
-                />
+                <Input.Root errorMessage={errors.email?.message}>
+                  <Input.Input
+                    placeholder="e-mail"
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                    onChangeText={field.onChange}
+                    value={field.value}
+                  />
+                </Input.Root>
               )
             }}
           />
@@ -334,12 +339,13 @@ export function SignUp() {
             name="tel"
             render={({ field }) => {
               return (
-                <Input
-                  placeholder="Telefone"
-                  onChangeText={field.onChange}
-                  value={field.value}
-                  errorMessage={errors.tel?.message}
-                />
+                <Input.Root errorMessage={errors.tel?.message}>
+                  <Input.Input
+                    placeholder="Telefone"
+                    onChangeText={field.onChange}
+                    value={field.value}
+                  />
+                </Input.Root>
               )
             }}
           />
@@ -350,19 +356,21 @@ export function SignUp() {
               name="password"
               render={({ field }) => {
                 return (
-                  <Input
-                    placeholder="password"
-                    onChangeText={field.onChange}
-                    value={field.value}
-                    secureTextEntry={showPassword}
-                    errorMessage={errors.password?.message}
-                    icon={showPassword ? 'Eye' : 'EyeSlash'}
-                    onPressIcon={() =>
-                      setShowPassword((state) => {
-                        return !state
-                      })
-                    }
-                  />
+                  <Input.Root errorMessage={errors.password?.message}>
+                    <Input.Input
+                      placeholder="password"
+                      onChangeText={field.onChange}
+                      value={field.value}
+                      secureTextEntry={isShowingPassword}
+                    />
+                    <Input.IconEye
+                      onPressIcon={() =>
+                        setIsShowingPassword((state) => {
+                          return !state
+                        })
+                      }
+                    />
+                  </Input.Root>
                 )
               }}
             />
@@ -374,21 +382,23 @@ export function SignUp() {
               name="confirmPassword"
               render={({ field }) => {
                 return (
-                  <Input
-                    placeholder="Confirm password"
-                    onChangeText={field.onChange}
-                    value={field.value}
-                    secureTextEntry={showConfirmPassword}
-                    onSubmitEditing={handleSubmit(handleSignUp)}
-                    returnKeyType="send"
-                    errorMessage={errors.confirmPassword?.message}
-                    icon={showConfirmPassword ? 'Eye' : 'EyeSlash'}
-                    onPressIcon={() =>
-                      setShowConfirmPassword((state) => {
-                        return !state
-                      })
-                    }
-                  />
+                  <Input.Root errorMessage={errors.confirmPassword?.message}>
+                    <Input.Input
+                      placeholder="Confirm password"
+                      onChangeText={field.onChange}
+                      value={field.value}
+                      secureTextEntry={isShowingConfirmPassword}
+                      onSubmitEditing={handleSubmit(handleSignUp)}
+                      returnKeyType="send"
+                    />
+                    <Input.IconEye
+                      onPressIcon={() =>
+                        setIsShowingConfirmPassword((state) => {
+                          return !state
+                        })
+                      }
+                    />
+                  </Input.Root>
                 )
               }}
             />

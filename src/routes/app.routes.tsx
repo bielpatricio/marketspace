@@ -1,28 +1,45 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs/lib/typescript/src/types'
+import {
+  NativeStackNavigationProp,
+  createNativeStackNavigator,
+} from '@react-navigation/native-stack'
 
 import { House, SignOut as SignOutPhosphor } from 'phosphor-react-native'
 import { useTheme } from 'native-base'
 import { Platform } from 'react-native'
-import { theme } from '@styles/default'
 import { Home } from '@screens/Home'
 import { SignOut } from '@components/SignOut'
+import { CreateAds } from '@screens/CreateAds'
+import { Details } from '@screens/Details'
 
-type AppRoutesType = {
+type AppRoutesTabType = {
   home: undefined
   signOut: undefined
 }
 
-export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutesType>
+type AppRoutesStackType = {
+  home: undefined
+  details: {
+    postId: string | undefined
+  }
+  create: undefined
+}
 
-const { Navigator, Screen } = createBottomTabNavigator<AppRoutesType>()
+export type AppNavigatorRoutesTabProps =
+  BottomTabNavigationProp<AppRoutesTabType>
+export type AppNavigatorRoutesStackProps =
+  NativeStackNavigationProp<AppRoutesStackType>
 
-export function AppRoutes() {
+const Tab = createBottomTabNavigator<AppRoutesTabType>()
+const Stack = createNativeStackNavigator<AppRoutesStackType>()
+
+function HomeTabs() {
   const { sizes, colors } = useTheme()
   const iconSize = sizes[8]
 
   return (
-    <Navigator
+    <Tab.Navigator
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
@@ -37,7 +54,7 @@ export function AppRoutes() {
         },
       }}
     >
-      <Screen
+      <Tab.Screen
         name="home"
         component={Home}
         options={{
@@ -47,7 +64,7 @@ export function AppRoutes() {
         }}
       />
 
-      <Screen
+      <Tab.Screen
         name="signOut"
         component={SignOut}
         options={{
@@ -56,32 +73,30 @@ export function AppRoutes() {
           ),
         }}
       />
+    </Tab.Navigator>
+  )
+}
 
-      {/* <Screen
-        name="exercise"
-        component={Exercise}
-        options={{ tabBarButton: () => null }}
+export function AppRoutes() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name="home"
+        component={HomeTabs}
       />
 
-      <Screen
-        name="history"
-        component={History}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <HistorySvg fill={color} width={iconSize} height={iconSize} />
-          ),
-        }}
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name="create"
+        component={CreateAds}
       />
 
-      <Screen
-        name="profile"
-        component={Profile}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <ProfileSvg fill={color} width={iconSize} height={iconSize} />
-          ),
-        }}
-      /> */}
-    </Navigator>
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name="details"
+        component={Details}
+      />
+    </Stack.Navigator>
   )
 }

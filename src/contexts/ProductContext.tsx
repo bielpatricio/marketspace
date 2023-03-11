@@ -9,9 +9,12 @@ import {
 } from 'react'
 
 type ProductContextDataProps = {
-  product: ProductDTO
+  allProductsPublicated: ProductDTO[]
+  productCreatedAndReadyToPost: ProductDTO
   getAllProductRegistered: () => Promise<void>
   isLoadingUserStorageData: boolean
+  handleCreateNewPost: (data: ProductDTO, img: any) => void
+  imageOfProductCreatedAndReadyToPost: any[]
 }
 
 export const ProductContext = createContext({} as ProductContextDataProps)
@@ -21,7 +24,9 @@ interface ProductProviderProps {
 }
 
 export function ProductContextProvider({ children }: ProductProviderProps) {
-  const [product, setProduct] = useState<ProductDTO>({} as ProductDTO)
+  const [allProductsPublicated, setAllProductsPublicated] = useState<
+    ProductDTO[]
+  >([])
 
   const [isLoadingUserStorageData, setIsLoadingUserStorageData] = useState(true)
 
@@ -43,7 +48,8 @@ export function ProductContextProvider({ children }: ProductProviderProps) {
         //   'Authorization': `Bearer ${token}`
         // }
       })
-      console.log('response meeee', response.data)
+      console.log('setAllProductsPublicated', response.data)
+      setAllProductsPublicated(response.data)
       // eslint-disable-next-line
     } catch (error) {
       console.log('response error', error)
@@ -53,6 +59,46 @@ export function ProductContextProvider({ children }: ProductProviderProps) {
     }
   }, [])
 
+  const [productCreatedAndReadyToPost, setProductCreatedAndReadyToPost] =
+    useState<ProductDTO>({} as ProductDTO)
+  const [
+    imageOfProductCreatedAndReadyToPost,
+    setImageOfProductCreatedAndReadyToPost,
+  ] = useState<any[]>([])
+
+  function handleCreateNewPost(data: ProductDTO, img: any[]) {
+    // eslint-disable-next-line
+    const {
+      id,
+      name,
+      description,
+      isNew,
+      price,
+      acceptTrade,
+      userId,
+      isActive,
+      createdAt,
+      updatedAt,
+      paymentMethods,
+    } = data
+    setProductCreatedAndReadyToPost({
+      id,
+      name,
+      description,
+      isNew,
+      price,
+      acceptTrade,
+      userId,
+      isActive,
+      createdAt,
+      updatedAt,
+      paymentMethods,
+    })
+    setImageOfProductCreatedAndReadyToPost(img)
+
+    console.log('productCreatedAndReadyToPost', productCreatedAndReadyToPost)
+  }
+
   useEffect(() => {
     getAllProductRegistered()
   }, [getAllProductRegistered])
@@ -60,7 +106,10 @@ export function ProductContextProvider({ children }: ProductProviderProps) {
   return (
     <ProductContext.Provider
       value={{
-        product,
+        imageOfProductCreatedAndReadyToPost,
+        handleCreateNewPost,
+        allProductsPublicated,
+        productCreatedAndReadyToPost,
         getAllProductRegistered,
         isLoadingUserStorageData,
       }}
