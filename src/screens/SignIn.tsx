@@ -137,7 +137,7 @@ export function SignIn() {
                       value={field.value}
                       onSubmitEditing={handleSubmit(handleFormSignIn)}
                       returnKeyType="send"
-                      // secureTextEntry={showPassword}
+                      secureTextEntry={showPassword}
                     />
                     <Input.IconEye
                       onPressIcon={() =>

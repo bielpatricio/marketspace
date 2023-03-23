@@ -14,6 +14,7 @@ type ProductContextDataProps = {
   getAllProductRegistered: () => Promise<void>
   isLoadingUserStorageData: boolean
   handleCreateNewPost: (data: ProductDTO, img: any) => void
+  handleConfirmCreateNewPost: () => void
   imageOfProductCreatedAndReadyToPost: any[]
 }
 
@@ -34,15 +35,15 @@ export function ProductContextProvider({ children }: ProductProviderProps) {
     try {
       setIsLoadingUserStorageData(true)
       console.log(
-        'response error api.defaults.headers.common.Authorization',
+        'api.defaults.headers.common.Authorization',
         api.defaults.headers.common.Authorization,
       )
       const response = await api.get('/products', {
         params: {
-          is_new: true,
-          accept_trade: true,
-          // payment_methods: 'pix',
-          // query: 'Cadeira',
+          //   is_new: true,
+          //   accept_trade: true,
+          //   payment_methods: 'pix',
+          //   query: 'Cadeira',
         },
         // headers: {
         //   'Authorization': `Bearer ${token}`
@@ -52,7 +53,7 @@ export function ProductContextProvider({ children }: ProductProviderProps) {
       setAllProductsPublicated(response.data)
       // eslint-disable-next-line
     } catch (error) {
-      console.log('response error', error)
+      console.log('response error ProductContextProvider', error)
       throw error
     } finally {
       setIsLoadingUserStorageData(false)
@@ -99,9 +100,40 @@ export function ProductContextProvider({ children }: ProductProviderProps) {
     console.log('productCreatedAndReadyToPost', productCreatedAndReadyToPost)
   }
 
-  useEffect(() => {
-    getAllProductRegistered()
-  }, [getAllProductRegistered])
+  // useEffect(() => {
+  //   getAllProductRegistered()
+  // }, [getAllProductRegistered])
+
+  async function handleConfirmCreateNewPost() {
+    // eslint-disable-next-line
+    const {name, description, isNew, price, acceptTrade, paymentMethods} = productCreatedAndReadyToPost
+
+    console.log('productCreatedAndReadyToPost', productCreatedAndReadyToPost)
+    try {
+      const response = await api.post('/products', {
+        name,
+        description,
+        is_new: isNew,
+        price,
+        accept_trade: acceptTrade,
+        payment_methods: paymentMethods,
+      })
+      console.log('setAllProductsPublicated', response.data)
+      try {
+        const responseImage = await api.post(
+          '/products/images',
+          imageOfProductCreatedAndReadyToPost,
+        )
+        console.log('images', responseImage.data)
+      } catch (errorImage) {
+        console.log('response error errorImage', errorImage)
+        throw errorImage
+      }
+    } catch (error) {
+      console.log('response error ProductContextProvider', error)
+      throw error
+    }
+  }
 
   return (
     <ProductContext.Provider
@@ -112,6 +144,7 @@ export function ProductContextProvider({ children }: ProductProviderProps) {
         productCreatedAndReadyToPost,
         getAllProductRegistered,
         isLoadingUserStorageData,
+        handleConfirmCreateNewPost,
       }}
     >
       {children}

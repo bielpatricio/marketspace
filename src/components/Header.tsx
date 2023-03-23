@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
+import { AppNavigatorRoutesStackProps } from '@routes/app.routes'
 import {
   Heading,
   Center,
@@ -7,82 +8,101 @@ import {
   HStack,
   Text,
   VStack,
+  IHeadingProps,
+  ITextProps,
 } from 'native-base'
-import { ArrowLeft, PencilSimpleLine } from 'phosphor-react-native'
+import { IHStackProps } from 'native-base/lib/typescript/components/primitives/Stack/HStack'
+import { ArrowLeft, PencilSimpleLine, Plus } from 'phosphor-react-native'
+import { ReactNode } from 'react'
 
-type HeaderProps = {
-  title: string
-  subtitle?: string
-  backIcon?: boolean
-  editIcon?: boolean
+type RootProps = IHStackProps & {
+  children: ReactNode
 }
 
-export function Header({
-  title,
-  backIcon = true,
-  editIcon = false,
-  subtitle = undefined,
-}: HeaderProps) {
+export function Root({ children, ...rest }: RootProps) {
+  return (
+    <HStack
+      {...rest}
+      alignItems="center"
+      justifyContent="space-between"
+      pb={6}
+      pt={16}
+    >
+      {children}
+    </HStack>
+  )
+}
+
+type TitleProps = ITextProps & {
+  title: string
+  subtitle?: string
+}
+
+export function Title({ title, subtitle, ...rest }: TitleProps) {
+  return (
+    <VStack justifyContent="center">
+      <Text
+        {...rest}
+        textAlign="center"
+        fontSize="md"
+        fontFamily="heading"
+        fontWeight="bold"
+        mb={1}
+      >
+        {title}
+      </Text>
+      {Boolean(subtitle) && (
+        <Text {...rest} textAlign="center" fontSize="sm">
+          {subtitle}
+        </Text>
+      )}
+    </VStack>
+  )
+}
+
+export function BackButton() {
   const navigation = useNavigation()
 
   function handleGoBack() {
     navigation.goBack()
   }
+  return (
+    <IconButton
+      marginRight={1}
+      onPress={handleGoBack}
+      icon={<Icon as={ArrowLeft} width={24} height={24} color="gray.100" />}
+    />
+  )
+}
+
+export function EditButton() {
+  function handleEdit() {
+    console.log('edit')
+  }
 
   return (
-    <HStack
-      justifyContent="space-between"
-      bgColor={subtitle ? 'purple.300' : 'transparent'}
-      pb={6}
-      pt={16}
-    >
-      {backIcon ? (
-        <IconButton
-          marginRight={1}
-          onPress={handleGoBack}
-          icon={<Icon as={ArrowLeft} width={24} height={24} color="gray.100" />}
-        />
-      ) : (
-        <HStack width={12}></HStack>
-      )}
+    <IconButton
+      marginRight={1}
+      onPress={handleEdit}
+      icon={
+        <Icon as={PencilSimpleLine} width={24} height={24} color="gray.100" />
+      }
+    />
+  )
+}
 
-      <VStack justifyContent="center">
-        <Heading
-          textAlign="center"
-          color={subtitle ? 'gray.600' : 'gray.100'}
-          fontSize="md"
-          fontFamily="heading"
-          mb={1}
-        >
-          {title}
-        </Heading>
-        {Boolean(subtitle) && (
-          <Text
-            textAlign="center"
-            color={subtitle ? 'gray.600' : 'gray.100'}
-            fontSize="sm"
-          >
-            {subtitle}
-          </Text>
-        )}
-      </VStack>
+export function PlusButton() {
+  const navigation = useNavigation<AppNavigatorRoutesStackProps>()
 
-      {editIcon ? (
-        <IconButton
-          marginRight={1}
-          onPress={handleGoBack}
-          icon={
-            <Icon
-              as={PencilSimpleLine}
-              width={24}
-              height={24}
-              color="gray.100"
-            />
-          }
-        />
-      ) : (
-        <HStack width={12}></HStack>
-      )}
-    </HStack>
+  function handleCreate() {
+    navigation.navigate('create')
+  }
+
+  return (
+    <IconButton
+      marginRight={1}
+      onPress={handleCreate}
+      icon={<Icon as={Plus} width={24} height={24} color="gray.100" />}
+    />
   )
 }

@@ -43,9 +43,7 @@ type FormSignUp = {
   tel: string
 }
 
-const phoneRegExp =
-  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-// /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+const phoneRegExp = /^\(\d{2}\)\s\d\s\d{4}-\d{4}$|^(\d{15})$/
 
 const signUpSchema = zod
   .object({
@@ -58,9 +56,9 @@ const signUpSchema = zod
     tel: zod
       .string()
       .min(11, { message: 'Informe um telefone.' })
-      .max(13, {
+      .max(16, {
         message:
-          'Informe um telefone valido (max 13 caracteres). xx xxxxx-xxxx',
+          'Informe um telefone valido (max 15 caracteres). (xx) x xxxx-xxxx',
       })
       .regex(phoneRegExp, {
         message: 'Informe um telefone valido. xx xxxxx-xxxx',
@@ -342,7 +340,15 @@ export function SignUp() {
                 <Input.Root errorMessage={errors.tel?.message}>
                   <Input.Input
                     placeholder="Telefone"
-                    onChangeText={field.onChange}
+                    onChangeText={(newValue) => {
+                      field.onChange(
+                        newValue
+                          .replace(/\D/g, '') // remove tudo que não é número
+                          .slice(0, 15) // limita em 15 caracteres
+                          .replace(/^(\d{2})(\d)/g, '($1) $2') // formata (99)
+                          .replace(/(\d{1})?(\d{4})(\d{4})$/, '$1 $2-$3'),
+                      )
+                    }}
                     value={field.value}
                   />
                 </Input.Root>

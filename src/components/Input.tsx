@@ -126,9 +126,3 @@ export function Input({ ...rest }: IInputProps) {
     />
   )
 }
-
-type InputProps = IInputProps & {
-  errorMessage?: string | null
-  icon?: 'Eye' | 'EyeSlash' | 'Money' | 'Search' | null
-  onPressIcon?: () => void
-}

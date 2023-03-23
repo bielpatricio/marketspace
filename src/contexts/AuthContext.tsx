@@ -128,9 +128,9 @@ export function AuthContextProvider({ children }: AuthProviderProps) {
       if (token && userLogged) {
         userAndTokenUpdate(userLogged, token)
       }
-
       // eslint-disable-next-line
     } catch (error) {
+      console.log('error', error)
       throw error
     } finally {
       setIsLoadingUserStorageData(false)

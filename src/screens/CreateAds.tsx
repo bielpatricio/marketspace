@@ -1,4 +1,4 @@
-import { Header } from '@components/Header'
+import * as Header from '@components/Header'
 import { ImageAds } from '@components/ImageAds'
 import { AppError } from '@utils/AppError'
 import {
@@ -148,7 +148,7 @@ export function CreateAds() {
         name,
         description,
         isNew: isNew === 'new',
-        price: Number(price) * 100,
+        price: Number(price.replace('.', '').replace(',', '.')) * 100,
         acceptTrade,
         userId: user.id,
         isActive: false,
@@ -163,7 +163,11 @@ export function CreateAds() {
 
   return (
     <VStack px={6} flex={1} bg="gray.600">
-      <Header title="Criar anúncio" />
+      <Header.Root>
+        <Header.BackButton />
+        <Header.Title title="Criar anúncio" />
+        <HStack width={12}></HStack>
+      </Header.Root>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* <form onSubmit={handleSubmit(handleCreateAd)}> */}
         <Text fontSize="md" color="gray.200" fontWeight="bold" mb={3}>
@@ -407,7 +411,7 @@ export function CreateAds() {
         <HStack mb={10}>
           <Button
             flex={1}
-            onPress={() => navigation.navigate('home')}
+            onPress={() => navigation.navigate('initial')}
             title="Cancelar"
             variant="gray"
             h={50}

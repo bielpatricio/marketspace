@@ -5,21 +5,24 @@ import {
   createNativeStackNavigator,
 } from '@react-navigation/native-stack'
 
-import { House, SignOut as SignOutPhosphor } from 'phosphor-react-native'
+import { House, SignOut as SignOutPhosphor, Tag } from 'phosphor-react-native'
 import { useTheme } from 'native-base'
 import { Platform } from 'react-native'
 import { Home } from '@screens/Home'
 import { SignOut } from '@components/SignOut'
 import { CreateAds } from '@screens/CreateAds'
 import { Details } from '@screens/Details'
+import { useCallback } from 'react'
+import { MyAds } from '@screens/MyAds'
 
-type AppRoutesTabType = {
+export type AppRoutesTabType = {
   home: undefined
+  myAds: undefined
   signOut: undefined
 }
 
-type AppRoutesStackType = {
-  home: undefined
+export type AppRoutesStackType = {
+  initial: undefined
   details: {
     postId: string | undefined
   }
@@ -37,6 +40,23 @@ const Stack = createNativeStackNavigator<AppRoutesStackType>()
 function HomeTabs() {
   const { sizes, colors } = useTheme()
   const iconSize = sizes[8]
+
+  const HouseIcon = useCallback(
+    (color: string) => <House weight="bold" color={color} size={iconSize} />,
+    [iconSize],
+  )
+
+  const MyAdsIcon = useCallback(
+    (color: string) => <Tag weight="bold" color={color} size={iconSize} />,
+    [iconSize],
+  )
+
+  const SignOutIcon = useCallback(
+    () => (
+      <SignOutPhosphor weight="bold" color={colors.red[300]} size={iconSize} />
+    ),
+    [iconSize, colors],
+  )
 
   return (
     <Tab.Navigator
@@ -58,9 +78,15 @@ function HomeTabs() {
         name="home"
         component={Home}
         options={{
-          tabBarIcon: ({ color }) => (
-            <House weight="bold" size={iconSize} color={color} />
-          ),
+          tabBarIcon: ({ color }) => HouseIcon(color),
+        }}
+      />
+
+      <Tab.Screen
+        name="myAds"
+        component={MyAds}
+        options={{
+          tabBarIcon: ({ color }) => MyAdsIcon(color),
         }}
       />
 
@@ -68,9 +94,7 @@ function HomeTabs() {
         name="signOut"
         component={SignOut}
         options={{
-          tabBarIcon: ({ color }) => (
-            <SignOutPhosphor size={iconSize} color={colors.red[300]} />
-          ),
+          tabBarIcon: SignOutIcon,
         }}
       />
     </Tab.Navigator>
@@ -82,7 +106,7 @@ export function AppRoutes() {
     <Stack.Navigator>
       <Stack.Screen
         options={{ headerShown: false }}
-        name="home"
+        name="initial"
         component={HomeTabs}
       />
 

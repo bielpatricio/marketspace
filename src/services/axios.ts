@@ -19,7 +19,7 @@ type APIInstanceProps = AxiosInstance & {
 }
 
 const api: APIInstanceProps = axios.create({
-  baseURL: 'http://192.168.0.30:3333',
+  baseURL: 'http://192.168.0.47:3333',
   timeout: 5000,
 }) as APIInstanceProps
 
@@ -34,7 +34,7 @@ async function handleSignOut() {
 }
 
 let isRefreshing = false
-const failedQueue: Array<PromiseType> = []
+let failedQueue: Array<PromiseType> = []
 
 const interceptTokenManager = api.interceptors.response.use(
   (response) => response,
@@ -61,6 +61,7 @@ const interceptTokenManager = api.interceptors.response.use(
                 originalRequestConfig.headers = {
                   Authorization: `Bearer ${token}`,
                 }
+                resolve(api(originalRequestConfig))
               },
               onFailure: (error: AxiosError) => {
                 reject(error)
@@ -115,6 +116,7 @@ const interceptTokenManager = api.interceptors.response.use(
             reject(error)
           } finally {
             isRefreshing = false
+            failedQueue = []
           }
         })
       }
@@ -126,14 +128,14 @@ const interceptTokenManager = api.interceptors.response.use(
       console.log('outro error', requestError.response.data)
       return Promise.reject(new AppError(requestError.response.data.message))
     } else {
-      console.log('outro error requestError xxxxxxxxxxxx')
+      console.log('outro error requestError xxxxxxxxxxxx', requestError)
       return Promise.reject(requestError)
     }
   },
 )
 
 api.registerInterceptTokenManager = () => {
-  console.log('outro error requestError vvvvvvvvv')
+  console.log('registerInterceptTokenManager')
   // api.interceptors.response.use(
   //   (response) => response,
   //   async (requestError) => {

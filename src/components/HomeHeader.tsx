@@ -1,9 +1,8 @@
 import { theme } from '@styles/default'
-import { Center, HStack, IButtonProps, Icon, Text, VStack } from 'native-base'
-import { Plus, User } from 'phosphor-react-native'
+import { HStack, Text, VStack } from 'native-base'
+import { Plus } from 'phosphor-react-native'
 import { Button } from './Button'
 import { Avatar } from './Avatar'
-import { useState } from 'react'
 import { api } from '@services/axios'
 import { useNavigation } from '@react-navigation/native'
 import { AppNavigatorRoutesStackProps } from '@routes/app.routes'
@@ -29,11 +28,11 @@ export function HomeHeader({ name, avatar }: HomeHeaderType) {
           alt="User Avatar"
         />
 
-        <VStack>
+        <VStack flexWrap="wrap">
           <Text flexWrap="wrap" ml={2} fontSize="sm" color="gray.100">
             Boas vindas,{' '}
           </Text>
-          <Text ml={2} fontWeight="bold" color="gray.100">
+          <Text ml={2} flexWrap="wrap" fontWeight="bold" color="gray.100">
             {name}!
           </Text>
         </VStack>
