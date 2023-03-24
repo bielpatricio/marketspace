@@ -108,8 +108,9 @@ export function ProductContextProvider({ children }: ProductProviderProps) {
     // eslint-disable-next-line
     const {name, description, isNew, price, acceptTrade, paymentMethods} = productCreatedAndReadyToPost
 
-    console.log('productCreatedAndReadyToPost', productCreatedAndReadyToPost)
+    console.log('handleConfirmCreateNewPost', productCreatedAndReadyToPost)
     try {
+      // ERROR "Um ou mais métodos de pagamento são inválidos."
       const response = await api.post('/products', {
         name,
         description,
