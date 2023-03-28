@@ -9,6 +9,8 @@
 
 <!-- TABLE OF CONTENTS -->
 
+## 💡Project still in progress
+
 ## Contents
 
 <p align="center">
@@ -26,7 +28,6 @@
 
 Marketspace App using React Native! Challenge project of React Native Ignite from Rocketseat. 
 All the project information and the rules that the challenge has to follow, is in this link: https://efficient-sloth-d85.notion.site/Desafio-03-Marketspace-39a72342e820424aaa12d7713ab1d175
-
 
 ## API structure
 
