@@ -1,42 +1,77 @@
 import { ProductDTO } from '@dtos/ProductDTO'
-import { Center, HStack, Image, Text, VStack, View } from 'native-base'
+import {
+  Center,
+  HStack,
+  Image,
+  Link,
+  Pressable,
+  Text,
+  VStack,
+  View,
+} from 'native-base'
 import { Avatar } from './Avatar'
 
-import imageBg from '@assets/bgProduct.png'
-import { ImageBackground } from 'react-native'
+import imageBg from '@assets/image404.jpg'
+import { api } from '@services/axios'
+import { useNavigation } from '@react-navigation/native'
+import { AppNavigatorRoutesStackProps } from '@routes/app.routes'
+import { IsNew } from './IsNew'
+import { useAuth } from '@hooks/useAuth'
 
 type AdsCardProps = {
   product: ProductDTO
 }
 
 export function AdsCard({ product }: AdsCardProps) {
+  const navigation = useNavigation<AppNavigatorRoutesStackProps>()
+
+  const { user } = useAuth()
+
+  // console.log(`productxxxx`, product)
+
   return (
-    <VStack flex={1} mb={5} maxW="48%">
+    <Pressable
+      flex={1}
+      my={3}
+      maxW="48%"
+      onPress={() => navigation.navigate('details', { postId: product.id })}
+    >
+      {/* <TouchableWithoutFeedback onPress={() => console.log('aee')}>
+        <> */}
       <VStack position="relative" flex={1} h={26} rounded="2xl">
         <Image
           w="full"
           rounded="2xl"
           position="absolute"
-          // source={{ uri: imageBg }}
-          source={imageBg}
+          source={
+            product?.productImages && product?.productImages?.length > 0
+              ? {
+                  uri: `${api.defaults.baseURL}/images/${product?.productImages[0]?.path}`,
+                }
+              : imageBg
+          }
+          h={26}
+          resizeMode="contain"
           alt="image"
         />
-        <HStack padding={2} alignItems="center" justifyContent="space-between">
-          <Avatar
-            size={9}
-            source={{ uri: `https://github.com/bielpatricio.png` }}
-            alt="User Avatar"
-          />
-          <Center
-            rounded="3xl"
-            py={1}
-            px={4}
-            bg={product.is_new ? 'purple.500' : 'gray.300'}
-          >
-            <Text color={'gray.600'} fontSize="xs" fontWeight="bold">
-              {product.is_new ? 'NOVO' : 'USADO'}
-            </Text>
-          </Center>
+        <HStack
+          padding={2}
+          alignItems="flex-start"
+          justifyContent="space-between"
+        >
+          {user.avatar && product.userId !== user.id ? (
+            <Avatar
+              size={9}
+              source={{
+                uri: `${api.defaults.baseURL}/images/${product.userId}`,
+              }}
+              alt="User Avatar"
+              resizeMode="contain"
+            />
+          ) : (
+            <VStack></VStack>
+          )}
+          <IsNew isNew={product.isNew} />
         </HStack>
       </VStack>
 
@@ -51,6 +86,8 @@ export function AdsCard({ product }: AdsCardProps) {
           {(product.price / 100).toFixed(2).toString().replace('.', ',')}
         </Text>
       </HStack>
-    </VStack>
+      {/* </>
+      </TouchableWithoutFeedback> */}
+    </Pressable>
   )
 }

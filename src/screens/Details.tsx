@@ -10,7 +10,9 @@ import { AppNavigatorRoutesStackProps } from '@routes/app.routes'
 import { api } from '@services/axios'
 import { theme } from '@styles/default'
 import { AppError } from '@utils/AppError'
+import imageBg from '@assets/image404.jpg'
 import {
+  Center,
   HStack,
   Icon,
   Image,
@@ -30,6 +32,7 @@ import {
 } from 'phosphor-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { Loading } from '../components/Loading'
+import { IsNew } from '@components/IsNew'
 
 type RouteParams = {
   postId: string
@@ -42,9 +45,10 @@ export function Details() {
     productCreatedAndReadyToPost,
     imageOfProductCreatedAndReadyToPost,
     handleConfirmCreateNewPost,
+    getProductById,
   } = useProduct()
 
-  const navigation = useNavigation()
+  const navigation = useNavigation<AppNavigatorRoutesStackProps>()
 
   const { postId } = route.params as RouteParams
   console.log('postId', postId)
@@ -53,27 +57,20 @@ export function Details() {
     useState<ProductDTO>({} as ProductDTO)
   const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    if (postId !== (undefined || '' || null)) {
-      setProductToShowInScreen(productCreatedAndReadyToPost)
-
-      console.log('productCreatedAndReadyToPost', productCreatedAndReadyToPost)
-    }
-  }, [postId, productCreatedAndReadyToPost])
-
   const toast = useToast()
 
-  const handlePostProduct = useCallback(async () => {
+  const handleGetProductById = useCallback(async () => {
     try {
       setIsLoading(true)
-      await handleConfirmCreateNewPost()
-      // eslint-disable-next-line
+      const data: ProductDTO = await getProductById(postId)
+      console.log('dataxxxxxxxxxxxx', data)
+      setProductToShowInScreen(data)
     } catch (error) {
-      console.log('error getAllProductRegistered', error)
       const isAppError = error instanceof AppError
 
-      const title = isAppError ? error.message : 'Error login. Try again later.'
-      // setIsLoading(false)
+      const title = isAppError
+        ? error.message
+        : 'Erro para carregar anúncios. Tente novamente em instantes.'
 
       toast.show({
         title,
@@ -84,12 +81,44 @@ export function Details() {
     } finally {
       setIsLoading(false)
     }
-  }, [toast])
+  }, [postId, toast, getProductById])
 
-  console.log(
-    'imageOfProductCreatedAndReadyToPost',
-    imageOfProductCreatedAndReadyToPost,
-  )
+  useEffect(() => {
+    if (!postId) {
+      setProductToShowInScreen({
+        ...productCreatedAndReadyToPost,
+        productImages: imageOfProductCreatedAndReadyToPost,
+      })
+    } else {
+      handleGetProductById()
+    }
+  }, [postId, handleGetProductById])
+
+  const handlePostProduct = useCallback(() => {
+    try {
+      setIsLoading(true)
+      handleConfirmCreateNewPost()
+      navigation.navigate('initial')
+      // eslint-disable-next-line
+    } catch (error) {
+      const isAppError = error instanceof AppError
+
+      const title = isAppError
+        ? error.message
+        : 'Erro para postar anúncios. Tente novamente em instantes.'
+
+      toast.show({
+        title,
+        placement: 'top',
+        bgColor: 'red.500',
+      })
+      throw error
+    } finally {
+      setIsLoading(false)
+    }
+  }, [toast, handleConfirmCreateNewPost, navigation])
+
+  console.log('productToShowInScreen', productToShowInScreen?.paymentMethods)
 
   return (
     <VStack>
@@ -110,24 +139,29 @@ export function Details() {
                 : ''
             }
           />
-          <HStack width={12}></HStack>
           {postId ? <Header.EditButton /> : <HStack width={12}></HStack>}
         </Header.Root>
 
-        {/* <HStack bgColor="amber.400" minH={72}>
+        <HStack minH={72}>
           <Image
             w="full"
-            rounded="2xl"
-            // source={{ uri: imageBg }}
-            source={{ uri: imageOfProductCreatedAndReadyToPost[0].uri }}
+            source={
+              productToShowInScreen?.productImages &&
+              productToShowInScreen?.productImages?.length > 0
+                ? {
+                    uri: `${api.defaults.baseURL}/images/${productToShowInScreen?.productImages[0]?.path}`,
+                  }
+                : imageBg
+            }
             alt="image"
+            h="full"
           />
-        </HStack> */}
+        </HStack>
 
         <VStack padding={4}>
           <HStack flexWrap="wrap" alignItems="center">
             <Avatar
-              size={14}
+              size={8}
               source={{ uri: `${api.defaults.baseURL}/images/${user.avatar}` }}
               alt="User Avatar"
             />
@@ -137,8 +171,10 @@ export function Details() {
             </Text>
           </HStack>
 
+          <HStack mt={4}>
+            <IsNew isNew={false} />
+          </HStack>
           <HStack
-            mt={10}
             flexWrap="wrap"
             alignItems="center"
             justifyContent="space-between"
@@ -164,7 +200,7 @@ export function Details() {
             </Text>
           </VStack>
 
-          <HStack mt={10}>
+          <HStack mt={5}>
             <Text fontSize="md" fontWeight="bold" color="gray.100">
               Aceita troca?
             </Text>
@@ -173,7 +209,7 @@ export function Details() {
             </Text>
           </HStack>
 
-          <VStack mt={10}>
+          <VStack mt={5} mb={20}>
             <Text fontSize="md" mb={2} fontWeight="bold" color="gray.100">
               Meios de pagamento:
             </Text>

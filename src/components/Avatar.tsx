@@ -13,6 +13,7 @@ export function Avatar({ size, ...rest }: AvatarProps) {
       rounded="full"
       borderWidth={2}
       borderColor="purple.300"
+      resizeMode="contain"
       {...rest}
     />
   )

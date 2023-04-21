@@ -16,7 +16,11 @@ import { useCallback, useEffect, useState } from 'react'
 
 export function Home() {
   const { user } = useAuth()
-  const { allProductsPublicated, getAllProductRegistered } = useProduct()
+  const {
+    allProductsPublicated,
+    getAllProductRegistered,
+    getMyProductRegistered,
+  } = useProduct()
 
   const [isLoading, setIsLoading] = useState(false)
   const toast = useToast()
@@ -46,18 +50,13 @@ export function Home() {
 
   useEffect(() => {
     getAllProductRegisteredHome()
-  }, [])
-
-  console.log('allProductsPublicated', allProductsPublicated)
+    getMyProductRegistered()
+  }, [getMyProductRegistered, getAllProductRegisteredHome])
 
   return (
     <VStack px={6} flex={1} pt={16} bg="gray.600">
       <HomeHeader name={user.name} avatar={user.avatar} />
-      <ListAds
-        isHome={true}
-        data={allProductsPublicated}
-        isLoading={isLoading}
-      />
+      <ListAds isHome data={allProductsPublicated} isLoading={isLoading} />
     </VStack>
   )
 }

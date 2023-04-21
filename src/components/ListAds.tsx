@@ -33,7 +33,8 @@ export function ListAds({ isHome = false, data, isLoading }: ListAdsProps) {
         )}
       </VStack>
     )
-  }, [data])
+  }, [data, isHome])
+
   return (
     <>
       {!isLoading ? (

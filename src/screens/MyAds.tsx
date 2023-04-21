@@ -3,10 +3,10 @@ import { ListAds } from '@components/ListAds'
 import { useProduct } from '@hooks/useProduct'
 import { AppError } from '@utils/AppError'
 import { HStack, Text, VStack, Select, Box, useToast } from 'native-base'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export function MyAds() {
-  const { allProductsPublicated } = useProduct()
+  const { myProductsPublicated, getMyProductRegistered } = useProduct()
   const [filter, setFilter] = useState('all')
 
   const [isLoading, setIsLoading] = useState(false)
@@ -22,7 +22,6 @@ export function MyAds() {
       const isAppError = error instanceof AppError
 
       const title = isAppError ? error.message : 'Error login. Try again later.'
-      // setIsLoading(false)
 
       toast.show({
         title,
@@ -35,7 +34,9 @@ export function MyAds() {
     }
   }, [toast])
 
-  console.log('allProductsPublicated', allProductsPublicated)
+  useEffect(() => {
+    getMyProductRegistered()
+  }, [getMyProductRegistered])
 
   return (
     <VStack px={6} flex={1} bg="gray.600">
@@ -46,8 +47,8 @@ export function MyAds() {
       </Header.Root>
 
       <HStack alignItems="center" justifyContent="space-between">
-        <Text fontSize="sm" color="gray.300" mb={3}>
-          {allProductsPublicated.length} anúncios
+        <Text alignItems="flex-start" fontSize="sm" color="gray.300" mb={3}>
+          {myProductsPublicated.length} anúncios ativos
         </Text>
 
         <Select
@@ -62,7 +63,7 @@ export function MyAds() {
         </Select>
       </HStack>
 
-      <ListAds data={allProductsPublicated} isLoading={isLoading} />
+      <ListAds data={myProductsPublicated} isLoading={isLoading} />
     </VStack>
   )
 }

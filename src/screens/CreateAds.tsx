@@ -148,7 +148,9 @@ export function CreateAds() {
         name,
         description,
         isNew: isNew === 'new',
-        price: Number(price.replace('.', '').replace(',', '.')) * 100,
+        price: Math.floor(
+          Number(price.replace('.', '').replace(',', '.')) * 100,
+        ),
         acceptTrade,
         userId: user.id,
         isActive: false,

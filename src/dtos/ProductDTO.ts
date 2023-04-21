@@ -1,3 +1,8 @@
+type ImageDTO = {
+  id: string
+  path: string
+}
+
 export type ProductDTO = {
   id: string
   name: string
@@ -10,6 +15,7 @@ export type ProductDTO = {
   createdAt: string
   updatedAt: string
   paymentMethods: string[]
+  productImages?: ImageDTO[]
 }
 // How send to backend
 // id: string
