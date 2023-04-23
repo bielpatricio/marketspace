@@ -14,7 +14,7 @@ import {
   VStack,
   useToast,
 } from 'native-base'
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import * as FileSystem from 'expo-file-system'
 import { theme } from '@styles/default'
@@ -27,11 +27,13 @@ import { TextArea } from '@components/TextArea'
 import { Radio } from '@components/Radio'
 import { Checkbox } from '@components/Checkbox'
 import { FooterButtons } from '@components/FooterButtons'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import { AppNavigatorRoutesStackProps } from '@routes/app.routes'
 import { Button } from '@components/Button'
 import { useProduct } from '../hooks/useProduct'
 import { useAuth } from '@hooks/useAuth'
+import { ProductDTO } from '@dtos/ProductDTO'
+import { api } from '@services/axios'
 
 const PHOTO_SIZE = 32
 const EDIT_SIZE = 6
@@ -49,17 +51,23 @@ const productSchema = zod.object({
 
 type productSchemaType = zod.infer<typeof productSchema>
 
+type RouteParams = {
+  postId: string
+}
+
 export function CreateAds() {
   const [imageUploaded, setImageUploaded] = useState<string[]>([])
   const [imageUploadedFile, setImageUploadedFile] = useState<any[]>([])
 
   const [photoIsLoading, setPhotoIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const toast = useToast()
 
   const {
     control,
     handleSubmit,
-    reset,
-    formState: { isSubmitting, errors },
+    setValue,
+    formState: { errors },
   } = useForm<productSchemaType>({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -71,9 +79,93 @@ export function CreateAds() {
     },
   })
 
-  const navigation = useNavigation<AppNavigatorRoutesStackProps>()
+  const { getProductById } = useProduct()
+  const route = useRoute()
 
-  const toast = useToast()
+  const { postId } = route.params as RouteParams
+  console.log('postId', postId)
+
+  const handleGetProductById = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      const data: ProductDTO = await getProductById(postId)
+
+      try {
+        data?.productImages?.map(async (image) => {
+          console.log('data.paymentMethods', image.path)
+
+          const photo = `${api.defaults.baseURL}/images/${image?.path}`
+
+          if (photo) {
+            const fileExtension = photo.split('.').pop()
+
+            const photoFile = {
+              name: `Product-profile.${fileExtension}`.toLowerCase(),
+              uri: photo,
+              type: `image/${fileExtension}`,
+            } as any
+
+            setImageUploadedFile((state) => {
+              return [...state, photoFile]
+            })
+            setImageUploaded((state) => {
+              return [...state, photoFile.uri]
+            })
+          }
+        })
+      } catch (error) {
+        const isAppError = error instanceof AppError
+
+        const title = isAppError
+          ? error.message
+          : 'Erro para carregar imagens. Tente novamente em instantes.'
+
+        toast.show({
+          title,
+          placement: 'top',
+          bgColor: 'red.500',
+        })
+        throw error
+      } finally {
+        setIsLoading(false)
+      }
+      setValue('paymentMethods', data.paymentMethods as [string, ...string[]])
+      setValue('name', data.name)
+      setValue('description', data.description)
+      setValue('isNew', data.isNew ? 'new' : 'old')
+      setValue(
+        'price',
+        (data.price / 100)
+          .toFixed(2)
+          .replace('.', ',')
+          .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.'),
+      )
+      setValue('acceptTrade', data.acceptTrade)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+
+      const title = isAppError
+        ? error.message
+        : 'Erro para carregar anúncios. Tente novamente em instantes.'
+
+      toast.show({
+        title,
+        placement: 'top',
+        bgColor: 'red.500',
+      })
+      throw error
+    } finally {
+      setIsLoading(false)
+    }
+  }, [postId, toast, getProductById])
+
+  useEffect(() => {
+    if (postId) {
+      handleGetProductById()
+    }
+  }, [postId, getProductById, handleGetProductById])
+
+  const navigation = useNavigation<AppNavigatorRoutesStackProps>()
 
   async function handleUserImageSelect() {
     setPhotoIsLoading(true)
@@ -144,7 +236,7 @@ export function CreateAds() {
       data
     handleCreateNewPost(
       {
-        id: '1-PROVISORY-ID-9',
+        id: postId || '1-PROVISORY-ID-9',
         name,
         description,
         isNew: isNew === 'new',

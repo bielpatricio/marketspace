@@ -26,7 +26,7 @@
 
 # 💡About The Project
 
-Marketspace App using React Native! Challenge project of React Native Ignite from Rocketseat. 
+Marketspace App using React Native! Challenge project of React Native Ignite from Rocketseat.
 All the project information and the rules that the challenge has to follow, is in this link: https://efficient-sloth-d85.notion.site/Desafio-03-Marketspace-39a72342e820424aaa12d7713ab1d175
 
 ## API structure
@@ -37,9 +37,9 @@ The API for this challenge was structured following the same idea as the API use
 - Beekeeper: Just like in the classes, we recommend using Beekeeper to visualize the database data.
 - Prisma Studio: If you prefer another way of viewing the database data, just access your API folder through the terminal and run the command `npx prisma studio`. That way, you will be able to see the tables and records in the url `http://localhost:5555/`
 - Insomnia/Postman: If you want to interact with the API in a very direct and easy way, you can use an API Rest Client like Insomnia or Postman.
-<br>
+  `<br>`
 
-# :iphone: Running locally
+# 📱 Running locally
 
 ```bash
 # Clone this repository
@@ -62,9 +62,9 @@ $ npm run dev
 # The api will start on port:3333.
 # The docs can be access on localhost:3333/api-docs/
 
-# The database was created with prisma, so you can see all database running
-$ npx prisma studio
-# The database will open on http://localhost:5555/.
+# The database was created with prisma, so you can see all database running, if you use android studio, you cant run prisma on port 5555
+$ npx prisma studio --port 5556
+# The database will open on http://localhost:5556/.
 ```
 
 # 🖼 Prints e Layout
@@ -77,7 +77,7 @@ The application layout is available on Figma:
 <br>
 
 <p align="center">
- 
+
 </p>
 
 <br>
@@ -85,14 +85,14 @@ The application layout is available on Figma:
   <br>
 
 <br>
-  
+
 # 💻 Technologies Used
 
  ![image](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white) ![image](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) ![image](https://img.shields.io/badge/Expo-FFFFFF?style=for-the-badge&logo=expo&logoColor=black)
-<br>
- <br>
-  
-# :computer: Contact
+`<br>`
+ `<br>`
+
+# 💻 Contact
 
 Gabriel Patrício - gabrieltp087@gmail.com - [https://github.com/bielpatricio/](https://github.com/bielpatricio)
 

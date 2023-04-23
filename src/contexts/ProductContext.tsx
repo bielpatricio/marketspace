@@ -22,6 +22,9 @@ type ProductContextDataProps = {
   handleConfirmCreateNewPost: () => void
   imageOfProductCreatedAndReadyToPost: any[]
   getProductById: (id: string) => Promise<ProductDTO>
+  deleteProductById: (id: string) => Promise<void>
+  patchProductById: (id: string, isActive: boolean) => Promise<void>
+  handlePutPost: (id: string) => void
 }
 
 export const ProductContext = createContext({} as ProductContextDataProps)
@@ -85,6 +88,37 @@ export function ProductContextProvider({ children }: ProductProviderProps) {
       setIsLoadingUserStorageData(false)
     }
   }, [])
+
+  const deleteProductById = useCallback(async (id: string) => {
+    try {
+      setIsLoadingUserStorageData(true)
+      await api.delete(`/products/${id}`)
+      // console.log('deleteProductById', response)
+      // eslint-disable-next-line
+    } catch (error) {
+      // console.log('response error ProductContextProvider', error)
+      throw error
+    } finally {
+      setIsLoadingUserStorageData(false)
+    }
+  }, [])
+
+  const patchProductById = useCallback(
+    async (id: string, isActive: boolean) => {
+      try {
+        setIsLoadingUserStorageData(true)
+        await api.patch(`/products/${id}`, {
+          is_active: !isActive,
+        })
+        // eslint-disable-next-line
+    } catch (error) {
+        throw error
+      } finally {
+        setIsLoadingUserStorageData(false)
+      }
+    },
+    [],
+  )
 
   const getMyProductRegistered = useCallback(async () => {
     try {
@@ -238,6 +272,49 @@ export function ProductContextProvider({ children }: ProductProviderProps) {
     }
   }, [productCreatedAndReadyToPost, imageOfProductCreatedAndReadyToPost])
 
+  const handlePutPost = useCallback(
+    async (id: string) => {
+      // eslint-disable-next-line
+    const {name, description, isNew, price, acceptTrade, paymentMethods} = productCreatedAndReadyToPost
+      try {
+        // ERROR "Um ou mais métodos de pagamento são inválidos."
+        const response = await api.put(`/products/${id}`, {
+          name,
+          description,
+          is_new: isNew,
+          price,
+          accept_trade: acceptTrade,
+          payment_methods: paymentMethods,
+        })
+
+        try {
+          const imagesForm = new FormData()
+          imagesForm.append('product_id', response.data.id)
+          for (const newImage of imageOfProductCreatedAndReadyToPost) {
+            imagesForm.append('images', newImage as any)
+          }
+
+          await api.post('/products/images', imagesForm, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+        } catch (errorImage: any) {
+          const textoError =
+            errorImage?.message === 'Internal server error'
+              ? 'A imagem não pode ser salva, vá nos detalhes da sua postagem e tente fazer o upload da imagem novamente.'
+              : `A postagem foi feita, mas ocorreu um erro ao carregar a imagem: ${errorImage.message}. Vá nos detalhes da sua postagem e tente fazer o upload da imagem novamente.`
+
+          throw new Error(textoError)
+        }
+      } catch (error) {
+        console.log('response error ProductContextProvider', error)
+        throw error
+      }
+    },
+    [productCreatedAndReadyToPost, imageOfProductCreatedAndReadyToPost],
+  )
+
   const valuesProvider = useMemo(() => {
     return {
       getMyProductRegistered,
@@ -250,6 +327,9 @@ export function ProductContextProvider({ children }: ProductProviderProps) {
       handleConfirmCreateNewPost,
       myProductsPublicated,
       getProductById,
+      deleteProductById,
+      patchProductById,
+      handlePutPost,
     }
   }, [
     getMyProductRegistered,
@@ -262,6 +342,9 @@ export function ProductContextProvider({ children }: ProductProviderProps) {
     handleConfirmCreateNewPost,
     myProductsPublicated,
     getProductById,
+    deleteProductById,
+    patchProductById,
+    handlePutPost,
   ])
 
   return (

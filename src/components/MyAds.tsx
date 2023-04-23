@@ -41,7 +41,10 @@ export function MyAds() {
           />
           <VStack justifyContent="center">
             <Text fontSize="md" fontWeight="bold" color="gray.300">
-              {myProductsPublicated.length}
+              {
+                myProductsPublicated.filter((product) => product.isActive)
+                  .length
+              }
             </Text>
             <Text fontSize="xs" color="gray.300">
               anúncios ativos

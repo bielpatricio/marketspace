@@ -10,6 +10,8 @@ import {
   VStack,
   IHeadingProps,
   ITextProps,
+  IButtonProps,
+  IIconButtonProps,
 } from 'native-base'
 import { IHStackProps } from 'native-base/lib/typescript/components/primitives/Stack/HStack'
 import { ArrowLeft, PencilSimpleLine, Plus } from 'phosphor-react-native'
@@ -60,7 +62,9 @@ export function Title({ title, subtitle, ...rest }: TitleProps) {
   )
 }
 
-export function BackButton() {
+type ButtonProps = IIconButtonProps
+
+export function BackButton({ ...rest }: ButtonProps) {
   const navigation = useNavigation()
 
   function handleGoBack() {
@@ -68,6 +72,7 @@ export function BackButton() {
   }
   return (
     <IconButton
+      {...rest}
       marginRight={1}
       onPress={handleGoBack}
       icon={<Icon as={ArrowLeft} width={24} height={24} color="gray.100" />}
@@ -75,15 +80,11 @@ export function BackButton() {
   )
 }
 
-export function EditButton() {
-  function handleEdit() {
-    console.log('edit')
-  }
-
+export function EditButton({ ...rest }: ButtonProps) {
   return (
     <IconButton
+      {...rest}
       marginRight={1}
-      onPress={handleEdit}
       icon={
         <Icon as={PencilSimpleLine} width={24} height={24} color="gray.100" />
       }
@@ -91,15 +92,18 @@ export function EditButton() {
   )
 }
 
-export function PlusButton() {
+export function PlusButton({ ...rest }: ButtonProps) {
   const navigation = useNavigation<AppNavigatorRoutesStackProps>()
 
   function handleCreate() {
-    navigation.navigate('create')
+    navigation.navigate('create', {
+      postId: undefined,
+    })
   }
 
   return (
     <IconButton
+      {...rest}
       marginRight={1}
       onPress={handleCreate}
       icon={<Icon as={Plus} width={24} height={24} color="gray.100" />}

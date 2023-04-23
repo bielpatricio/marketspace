@@ -46,7 +46,7 @@ export function Home() {
     } finally {
       setIsLoading(false)
     }
-  }, [toast])
+  }, [toast, getAllProductRegistered])
 
   useEffect(() => {
     getAllProductRegisteredHome()

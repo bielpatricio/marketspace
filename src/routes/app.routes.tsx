@@ -26,7 +26,9 @@ export type AppRoutesStackType = {
   details: {
     postId: string | undefined
   }
-  create: undefined
+  create: {
+    postId: string | undefined
+  }
 }
 
 export type AppNavigatorRoutesTabProps =

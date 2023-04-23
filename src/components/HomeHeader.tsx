@@ -16,7 +16,9 @@ export function HomeHeader({ name, avatar }: HomeHeaderType) {
   const navigation = useNavigation<AppNavigatorRoutesStackProps>()
 
   function handleGoCreateAds() {
-    navigation.navigate('create')
+    navigation.navigate('create', {
+      postId: undefined,
+    })
   }
 
   return (

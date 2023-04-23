@@ -38,6 +38,18 @@ export function MyAds() {
     getMyProductRegistered()
   }, [getMyProductRegistered])
 
+  const getMyProductsFiltered = useCallback(() => {
+    if (filter === 'is_active') {
+      return myProductsPublicated.filter((product) => product.isActive)
+    }
+
+    if (filter === 'is_not_active') {
+      return myProductsPublicated.filter((product) => !product.isActive)
+    }
+
+    return myProductsPublicated
+  }, [filter, myProductsPublicated])
+
   return (
     <VStack px={6} flex={1} bg="gray.600">
       <Header.Root>
@@ -63,7 +75,7 @@ export function MyAds() {
         </Select>
       </HStack>
 
-      <ListAds data={myProductsPublicated} isLoading={isLoading} />
+      <ListAds data={getMyProductsFiltered()} isLoading={isLoading} />
     </VStack>
   )
 }
