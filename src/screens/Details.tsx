@@ -1,7 +1,7 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { Avatar } from '@components/Avatar'
 import { Button } from '@components/Button'
 import * as Header from '@components/Header'
-import { ImageAds } from '@components/ImageAds'
 import { ProductDTO } from '@dtos/ProductDTO'
 import { useAuth } from '@hooks/useAuth'
 import { useProduct } from '@hooks/useProduct'
@@ -16,9 +16,9 @@ import {
   FlatList,
   HStack,
   Icon,
-  Image,
   ScrollView,
   Text,
+  Image,
   VStack,
   useToast,
 } from 'native-base'
@@ -37,7 +37,7 @@ import {
 import { useCallback, useEffect, useState } from 'react'
 import { Loading } from '../components/Loading'
 import { IsNew } from '@components/IsNew'
-import { Alert } from 'react-native'
+import { Alert, Image as ImageReact, View } from 'react-native'
 
 type RouteParams = {
   postId: string
@@ -448,6 +448,24 @@ export function Details() {
     navigation,
   ])
 
+  const imageDefault = useCallback(() => {
+    return (
+      // <Image
+      //   w="full"
+      //   source={imageBg}
+      //   alt="image"
+      //   h="full"
+      //   resizeMode="contain"
+      // />
+      <ImageReact
+        accessibilityLabel="product image"
+        source={imageBg}
+        style={{ height: 400, width: 400 }}
+        resizeMode="contain"
+      />
+    )
+  }, [])
+
   return (
     <VStack h="full">
       {isLoading ? (
@@ -511,27 +529,27 @@ export function Details() {
                   : item.uri
                 console.log('item', URI_PATH)
                 return (
-                  <HStack h={72} bgColor={`amber.${index + 1}00`}>
-                    <Image
-                      // w="full"
-                      // source={{ uri: URI_PATH }}
-                      source={imageBg}
-                      alt="image"
-                      h="full"
+                  // <HStack h={72} bgColor={`amber.${index + 1}00`}>
+                  //   <Image
+                  //     // w="full"
+                  //     // source={{ uri: URI_PATH }}
+                  //     source={imageBg}
+                  //     alt="image"
+                  //     h="full"
+                  //     resizeMode="contain"
+                  //   />
+                  // </HStack>
+                  <View style={{ height: 400 }}>
+                    <ImageReact
+                      accessibilityLabel="product image"
+                      source={{ uri: URI_PATH }}
+                      style={{ height: 400, width: 400 }}
                       resizeMode="contain"
                     />
-                  </HStack>
+                  </View>
                 )
               }}
-              ListEmptyComponent={() => (
-                <Image
-                  w="full"
-                  source={imageBg}
-                  alt="image"
-                  h="full"
-                  resizeMode="contain"
-                />
-              )}
+              ListEmptyComponent={imageDefault}
             />
 
             <VStack padding={4}>

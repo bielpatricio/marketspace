@@ -11,11 +11,19 @@ import {
   useMemo,
 } from 'react'
 
+type ProductParams = {
+  isNew?: boolean | null
+  acceptTrade?: boolean | null
+  paymentMethods?: string[] | null
+  query?: string
+}
+
 type ProductContextDataProps = {
   allProductsPublicated: ProductDTO[]
   myProductsPublicated: ProductDTO[]
+  isLoading: boolean
   productCreatedAndReadyToPost: ProductDTO
-  getAllProductRegistered: () => Promise<void>
+  getAllProductRegistered: (params: ProductParams) => Promise<void>
   getMyProductRegistered: () => Promise<void>
   isLoadingUserStorageData: boolean
   handleCreateNewPost: (data: ProductDTO, img: any) => void
@@ -42,52 +50,66 @@ export function ProductContextProvider({ children }: ProductProviderProps) {
     ProductDTO[]
   >([])
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const [isLoadingUserStorageData, setIsLoadingUserStorageData] = useState(true)
 
-  const getAllProductRegistered = useCallback(async () => {
-    try {
-      setIsLoadingUserStorageData(true)
-      console.log(
-        'api.defaults.headers.common.Authorization',
-        api.defaults.headers.common.Authorization,
-      )
-      const response = await api.get('/products', {
-        // const response = await api.get('/users/products', {
-        params: {
-          // is_new: true,
-          // accept_trade: true,
-          // payment_methods: 'pix',
-          // query: 'Cadeira',
-        },
-        // headers: {
-        //   'Authorization': `Bearer ${token}`
-        // }
-      })
-      console.log('setAllProductsPublicated', response.data)
-      setAllProductsPublicated(
-        response.data.map((data: any) => ({
-          id: data.id,
-          name: data.name,
-          description: data.description,
-          price: data.price,
-          isNew: data.is_new,
-          acceptTrade: data.accept_trade,
-          userId: data.user.avatar,
-          isActive: data.is_active,
-          createdAt: data.created_at,
-          updatedAt: data.updated_at,
-          paymentMethods: data.payment_methods,
-          productImages: data.product_images,
-        })),
-      )
-      // eslint-disable-next-line
+  const getAllProductRegistered = useCallback(
+    async ({
+      isNew = null,
+      acceptTrade = null,
+      paymentMethods = null,
+      query = '',
+    }: ProductParams) => {
+      try {
+        setIsLoading(true)
+        setIsLoadingUserStorageData(true)
+        console.log('params', {
+          is_new: isNew,
+          accept_trade: acceptTrade,
+          payment_methods: paymentMethods,
+          query,
+        })
+        const response = await api.get('/products', {
+          // const response = await api.get('/users/products', {
+          params: {
+            is_new: isNew,
+            accept_trade: acceptTrade,
+            payment_methods: paymentMethods,
+            query,
+          },
+          // headers: {
+          //   'Authorization': `Bearer ${token}`
+          // }
+        })
+        console.log('setAllProductsPublicated', response.data)
+        setAllProductsPublicated(
+          response.data.map((data: any) => ({
+            id: data.id,
+            name: data.name,
+            description: data.description,
+            price: data.price,
+            isNew: data.is_new,
+            acceptTrade: data.accept_trade,
+            userId: data.user.avatar,
+            isActive: data.is_active,
+            createdAt: data.created_at,
+            updatedAt: data.updated_at,
+            paymentMethods: data.payment_methods,
+            productImages: data.product_images,
+          })),
+        )
+        // eslint-disable-next-line
     } catch (error) {
-      console.log('response error ProductContextProvider', error)
-      throw error
-    } finally {
-      setIsLoadingUserStorageData(false)
-    }
-  }, [])
+        console.log('response error ProductContextProvider', error)
+        throw error
+      } finally {
+        setIsLoadingUserStorageData(false)
+        setIsLoading(false)
+      }
+    },
+    [],
+  )
 
   const deleteProductById = useCallback(async (id: string) => {
     try {
@@ -330,6 +352,7 @@ export function ProductContextProvider({ children }: ProductProviderProps) {
       deleteProductById,
       patchProductById,
       handlePutPost,
+      isLoading,
     }
   }, [
     getMyProductRegistered,
@@ -345,6 +368,7 @@ export function ProductContextProvider({ children }: ProductProviderProps) {
     deleteProductById,
     patchProductById,
     handlePutPost,
+    isLoading,
   ])
 
   return (

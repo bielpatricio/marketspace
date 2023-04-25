@@ -20,15 +20,13 @@ export function Home() {
     allProductsPublicated,
     getAllProductRegistered,
     getMyProductRegistered,
+    isLoading,
   } = useProduct()
-
-  const [isLoading, setIsLoading] = useState(false)
   const toast = useToast()
 
   const getAllProductRegisteredHome = useCallback(async () => {
     try {
-      setIsLoading(true)
-      await getAllProductRegistered()
+      await getAllProductRegistered({})
       // eslint-disable-next-line
     } catch (error) {
       console.log('error getAllProductRegistered', error)
@@ -43,8 +41,6 @@ export function Home() {
         bgColor: 'red.500',
       })
       throw error
-    } finally {
-      setIsLoading(false)
     }
   }, [toast, getAllProductRegistered])
 

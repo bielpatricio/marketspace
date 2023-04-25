@@ -259,7 +259,7 @@ export function CreateAds() {
     <VStack px={6} flex={1} bg="gray.600">
       <Header.Root>
         <Header.BackButton />
-        <Header.Title title="Criar anúncio" />
+        <Header.Title title={postId ? 'Editar anúncio' : 'Criar anúncio'} />
         <HStack width={12}></HStack>
       </Header.Root>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -493,7 +493,6 @@ export function CreateAds() {
                   defaultValue={[]}
                   value={field.value}
                   onChange={(newValues) => {
-                    console.log('newValues', newValues)
                     field.onChange(newValues)
                   }}
                   colorScheme="purple"

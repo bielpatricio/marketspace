@@ -52,15 +52,19 @@ export function IconMoney() {
 }
 
 type IconSearchProps = {
-  onPressIcon: () => void
+  onPressIconSearch: () => void
+  onPressIconFilter: () => void
 }
 
-export function IconSearch({ onPressIcon }: IconSearchProps) {
+export function IconSearch({
+  onPressIconSearch,
+  onPressIconFilter,
+}: IconSearchProps) {
   return (
     <HStack h="full" alignItems="center" backgroundColor="gray.700">
       <IconButton
         marginRight={2}
-        onPress={onPressIcon}
+        onPress={onPressIconSearch}
         icon={
           <Icon as={MagnifyingGlass} width={24} height={24} color="gray.100" />
         }
@@ -70,7 +74,7 @@ export function IconSearch({ onPressIcon }: IconSearchProps) {
       </Text>
       <IconButton
         marginRight={1}
-        onPress={onPressIcon}
+        onPress={onPressIconFilter}
         icon={<Icon as={Sliders} width={24} height={24} color="gray.100" />}
       />
     </HStack>
