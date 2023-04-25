@@ -9,16 +9,14 @@
 
 <!-- TABLE OF CONTENTS -->
 
-## 💡Project still in progress
-
 ## Contents
 
 <p align="center">
     <p><a href="#about-the-project" title=" go to About the Project">About The Project</a></p>
-    <p><a href="#iphone-running-locally" title=" go to Running locally">Running locally</a></p>
+    <p><a href="#-running-locally" title=" go to Running locally">Running locally</a></p>
     <p><a href="#-prints-e-layout" title=" go to Prints e Layout">Prints and Layout</a></p>
     <p><a href="#-technologies-used" title=" go to Technologies Used">Technologies Used</a></p>
-    <p><a href="#computer-contact" title=" go to Contact">Contact</a></p>
+    <p><a href="#-contact" title=" go to Contact">Contact</a></p>
   </p>
 
 <br>
@@ -89,8 +87,8 @@ The application layout is available on Figma:
 # 💻 Technologies Used
 
  ![image](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white) ![image](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) ![image](https://img.shields.io/badge/Expo-FFFFFF?style=for-the-badge&logo=expo&logoColor=black)
-`<br>`
- `<br>`
+<br>
+<br>
 
 # 💻 Contact
 
