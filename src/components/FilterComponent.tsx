@@ -21,10 +21,10 @@ import { X } from 'phosphor-react-native'
 import { useProduct } from '@hooks/useProduct'
 
 const filterSchema = zod.object({
-  isNew: zod.boolean(),
-  isNotNew: zod.boolean(),
-  acceptTrade: zod.boolean(),
-  paymentMethods: zod.string().array().nonempty(),
+  isNew: zod.boolean().optional(),
+  isNotNew: zod.boolean().optional(),
+  acceptTrade: zod.boolean().optional(),
+  paymentMethods: zod.string().array().optional(),
 })
 
 type filterSchemaType = zod.infer<typeof filterSchema>
@@ -54,6 +54,7 @@ export function FilterComponent() {
   }
 
   async function submitFilter(data: filterSchemaType) {
+    console.log('ueee')
     const dataToSend = {
       isNew: data.isNew === data.isNotNew ? null : !!data.isNew,
       acceptTrade: data.acceptTrade,
