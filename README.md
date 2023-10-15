@@ -74,13 +74,9 @@ The application layout is available on Figma:
 </a>
 <br>
 
-<p align="center">
-
-</p>
-
-<br>
 <p align="center" style="display: flex; align-items: flex-start; justify-content: center;">
-  <br>
+
+https://github.com/bielpatricio/marketspace/assets/32223762/732f427a-711b-4665-92d0-bcd419d7625e
 
 <br>
 
